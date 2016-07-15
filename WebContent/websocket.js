@@ -1,25 +1,35 @@
-var endpoint = "ws://localhost:8080/TradersToolApplication/getPriceEndPoint";
+var hostName = window.location.hostname;
+var port = window.location.port == ""? "" : ":"+window.location.port;
 
-var chatClient = null;
+var endpoint = "ws://"+hostName+port+"/StockTicker/getPrice";
 
-chatClient = new WebSocket(endpoint);
-chatClient.onmessage = function(event) {
+var webSocket = new WebSocket(endpoint);
+webSocket.onmessage = function(event) {
 	var message = event.data;
 	var jsonObj = JSON.parse(message);
-	var record = stockStore.getById(jsonObj.ticker); 
-	if(record == null) {
-		stockStore.add(jsonObj);
-	} else {
-		record.set(jsonObj);
+	var stockStore = Ext.getStore('stockStore');
+	if(stockStore != null) {
+		var record = stockStore.getById(jsonObj.symbol);
+		if(record == null) {
+			stockStore.add(jsonObj);
+		} else {
+			record.set(jsonObj);
+			var grid = Ext.getCmp('stockGrid');
+			if(grid != null) {
+				var color = jsonObj.increase? "ccff99": "ff8080"; 
+				var row = grid.getView().getRow(record);
+				Ext.get(row).highlight(color);
+			}
+		}
 	}
 };
 
 function disconnect() {
-	chatClient.close();
+	webSocket.close();
 }
 
 function sendMessage(message) {
 	if(message !== '') {
-		chatClient.send(message);
+		webSocket.send(message);
 	}
 }

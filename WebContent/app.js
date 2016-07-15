@@ -1,14 +1,14 @@
-var stockStore = Ext.create('Ext.data.Store', {
-    fields:['symbol', 'price', 'open', 'high', 'low', 'direction', 'change', 'changePer'],
+Ext.define('StockTicker.model.Ticker', {
+	extend: 'Ext.data.Model',
+	fields:['ticker', 'currentPrice', 'openPrice', 'high', 'low', 'direction', 'change', 'changePer'],
     proxy: {
     	type: 'memory'
     },
-    idProperty: 'symbol',
-    data: [
-        { symbol: 'AAPL', price: 'lisa@simpsons.com', open: '555-111-1224', high :'dfsf', low :'fsddf',direction:true },
-        { symbol: 'MSFT', price: 'lisa@simpsons.com', open: '555-111-1224', high :'dfsf', low :'fsddf',direction:false },
-        { symbol: 'JPM', price: 'lisa@simpsons.com', open: '555-111-1224', high :'dfsf', low :'fsddf',direction:false }
-    ]
+    idProperty: 'ticker'
+})
+
+var stockStore = Ext.create('Ext.data.Store', {
+    model: 'StockTicker.model.Ticker'
 });
 
 Ext.define('StockTicker.ViewModel', {
@@ -78,19 +78,22 @@ Ext.application({
             	title : 'Stock Ticker',
             	reference: 'stockGrid',
             	store: stockStore,
+            	viewConfig: {
+            		markDirty: false
+            	},
             	columns:  {
             		defaults: {
             			flex: 1
             		},
             		items: [
-      	    	          { header: 'Symbol',  dataIndex: 'symbol' },
-    	    	          { header: 'Price', dataIndex: 'price'},
-    	    	          { header: 'Open', dataIndex: 'open' },
-    	    	          { header: 'High', dataIndex: 'high' },
-    	    	          { header: 'Low', dataIndex: 'low' },
+      	    	          { header: 'Symbol',  dataIndex: 'ticker' },
+    	    	          { header: 'Price', dataIndex: 'currentPrice', renderer: Ext.util.Format.numberRenderer('0.000')},
+    	    	          { header: 'Open', dataIndex: 'openPrice', renderer: Ext.util.Format.numberRenderer('0.000') },
+    	    	          { header: 'High', dataIndex: 'high', renderer: Ext.util.Format.numberRenderer('0.000') },
+    	    	          { header: 'Low', dataIndex: 'low', renderer: Ext.util.Format.numberRenderer('0.000') },
     	    	          { header: 'Direction', dataIndex: 'direction', align: 'center', renderer: function(value) { return value?"<span style='color: green'>&#9650;</span>":"<span style='color: red'>&#9660;</span>" }},
-    	    	          { header: 'Change', dataIndex: 'change' },
-    	    	          { header: '%', dataIndex: 'changePer' }
+    	    	          { header: 'Change', dataIndex: 'change', renderer: Ext.util.Format.numberRenderer('0.000') },
+    	    	          { header: '%', dataIndex: 'changePer', renderer: Ext.util.Format.numberRenderer('0.000') }
         	          ]
             	},
             	buttons: [{

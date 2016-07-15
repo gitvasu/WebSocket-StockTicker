@@ -1,15 +1,18 @@
-var endpoint = "ws://localhost:8080/StockTicker/getPriceEndpoint";
+var endpoint = "ws://localhost:8080/TradersToolApplication/getPriceEndPoint";
 
 var chatClient = null;
 
-function connect() {
-	chatClient = new WebSocket(endpoint);
-	chatClient.onmessage = function(event) {
-		var message = event.data;
-		var jsonObj = Ext.util.JSON.encode(message);
-		stockStore.getById(jsonObj.symbol);
-	};
-}
+chatClient = new WebSocket(endpoint);
+chatClient.onmessage = function(event) {
+	var message = event.data;
+	var jsonObj = JSON.parse(message);
+	var record = stockStore.getById(jsonObj.ticker); 
+	if(record == null) {
+		stockStore.add(jsonObj);
+	} else {
+		record.set(jsonObj);
+	}
+};
 
 function disconnect() {
 	chatClient.close();

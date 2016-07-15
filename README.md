@@ -1,5 +1,6 @@
 # StockTicker
 A simple fake stock ticker - WebSocket implementation
+
 The UI is implemented using Ext
 
 ![alt tag](images/Screenshot.png?raw=true)
@@ -8,4 +9,5 @@ The WebSocket connection is established once the index.html is loaded. The fake 
 
 ###Other Links
 [Comet](https://en.wikipedia.org/wiki/Comet_(programming))
+
 [WebSocket](https://en.wikipedia.org/wiki/WebSocket)

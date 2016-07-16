@@ -3,9 +3,7 @@ package com.ticker.endpoint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -21,17 +19,23 @@ import com.ticker.model.Ticker;
 public class TickerEndpoint {
 
 	static List<Session> sessionList = Collections.synchronizedList(new ArrayList<Session>());
-	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	private static ObjectMapper mapper = new ObjectMapper();
 	static {
 		final Runnable generateData = new Runnable() {
-
+			Random r = new Random();
 			@Override
 			public void run() {
-				generateData();
+				while(true) {
+					generateData();
+					try {
+						Thread.sleep(r.nextInt(500) + 500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		};
-		scheduler.scheduleAtFixedRate(generateData, 0, 1, TimeUnit.SECONDS);
+		new Thread(generateData).start();
 	}
 
 	@OnOpen

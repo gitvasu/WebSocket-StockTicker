@@ -1,7 +1,8 @@
 var hostName = window.location.hostname;
 var port = window.location.port == ""? "" : ":"+window.location.port;
+var protocol = window.location.protocol == "https:"? "wss:": "ws:"; 
 
-var endpoint = "ws://"+hostName+port+"/StockTicker/getPrice";
+var endpoint = protocol+"//"+hostName+port+"/StockTicker/getPrice";
 
 var webSocket = new WebSocket(endpoint);
 webSocket.onmessage = function(event) {
